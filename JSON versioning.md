@@ -32,7 +32,7 @@ A minor change would be for new features or functionality that is backwords comp
 #### MAJOR
 A major change would include new required data. Anychages where the client needs to make changes would be considered a majore change.
 
-
+## Nuget package implemenation
 Nuget package for each type of schema
 	Will include:
     - Models
