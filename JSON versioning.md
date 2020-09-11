@@ -16,53 +16,81 @@
     - Access to schema file
 - Azure blob storage
 
-    Blobs will be organized by schema. Example: transaction,Barcode Noramlization
-    blobls will be stored as json with a file name of the schema version. Example: v1.5.1
-- NextGenShemas MVC project 
+    Blobs will be organized by schema. Example: transaction,Barcode Normalization
+    blobs will be stored as json with a file name of the schema version. Example: v1.5.1
+- NextGenSchemas MVC project 
 
    Used for exposing blob storage
 
-## Systematic versioning
-![Image of Systematic versioning](https://media.geeksforgeeks.org/wp-content/uploads/semver.png)
+## Semantic versioning
+![Image of Semantic versioning](https://media.geeksforgeeks.org/wp-content/uploads/semver.png)
 
 #### PATCH
 A patch change would be used for bug fixes
 #### MINOR
-A minor change would be for new features or functionality that is backwords compatible
+A minor change would be for new features or functionality that is back words compatible
 #### MAJOR
-A major change would include new required data. Anychages where the client needs to make changes would be considered a majore change.
+A major change would include new required data. Any changes where the client needs to make changes would be considered a major change.
+#### PRE-RELEASE
+Changes that are being tested before being utilized this would live in Meijer's INT environment. Versions will be have a suffix of .alpha.x
 
-## Nuget package implemenation
-Nuget package for each type of schema
-	Will include:
-    - Models
-    - Helper libraries
-    - Schema validation
-    - Access to schema file
+## Nuget package implementation
+A Nuget package for each type of schema will needed to support model/schema changes
 
-    
+Will include:
 
-Retail Next gen schema will provide endpoints to schema files. This repo will have all nuget packages installed.
-Controllers will be the various schemas
-Get will pull a list of schema files for that service
+- **Models**
 
-Sample: JSON
+    Models will include all data for the specified schema version the nuget package is for. The schema will be used for model verification I.E. no required field annotations
+- **Helper libraries**
 
-{
-   "id": "aa14300c-3483-ea11-a94c-0004ffa078c3", // MANDATORY
-   
-   "businessDate": "2020-04-20", // MANDATORY
-   "originalBusinessDate": null,
-   "payOnPhoneEligible": "false",
-   "basketTotalWithTax": "21.39",
-   "transactionType": "sale", // MANDATORY sale or eod, newly added field
-   "transactionDateTime": "04202020 062544", // MANDATORY, need to change the date time format
-   "cashierID": "550",
+    Parsing functions
+- **Schema validation**
+
+    Parsed json will be automatically checked against the schema
+- **Access to schema file through blob storage**
+
+    The schema blob will be downloaded on startup the nuget package will expose the schema in a public field. A method will be included for http requests.
+
+    when serializing to model use the schema to validate no more [required]
 
 
-Projects will include nugetpackage for version supported
+    the version of the schema would be set during release. for example 2 devs working on the schema they should not decide the version
 
+    how do we deal with schema changes in the 3 environments. schema needs to be fully deployed before dev starts
+- **Management of deployment environment**
+    The nuget package will be environment aware. when running in pre production environments the pre-release versions of the schema will be used if the specified schema version has not been fully completed aka in prod.
+
+## Schema Deployment
+
+A user story is required for a schema change. The story will describe the changes needed for the change along with which fields are required and their data types. Test cases should be added which include testable JSON input. During development the dev will make their changes have the schema reviewed and then QA will review and test using test cases provided in the user story.
+
+Steps:
+1. Dev completes schema changes
+1. Card is moved to PR
+1. Card is QA validates various JSON input against new schema
+1.  publishing schema
+    1. Pipeline will take a version type variable of PATCH,MINOR,MAJOR to determine the new version
+    1. Pipeline will POST to NextGenSchemas to pull the latest schema from azure and return the schema sent to it with the version incremented. The endpoint will require to specify if the version will need to be a pre release.
+    1. Pipeline will deploy the schema file to blob storage with the file name of the semantic version.
+    1. During prod deployment the same steps will be taken but the file version will be without the pre-release version
+
+## Nuget package updates
+A Nuget package update can be required for two scenarios.
+
+1. Update to the functionality of the Nuget package.
+
+    When the functionality of the Nuget package is updated the package version would be incremented while following the same rules of semantic versioning.
+
+1. Update to the supported schema.
+
+    **Before the Nuget package can be updated to support a new schema, the new schema must be published to Azure.**
+
+    Changes to the models will be completed
+    The schema version supported needs to be updated. (Do not include pre-release versioning. the nuget package will determine which will be used based on the environment it is running in)
 ## Use Cases
+
+### Two devs working on the same schema
 
 ### Nuget package update
 
