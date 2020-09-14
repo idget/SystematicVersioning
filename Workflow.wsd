@@ -1,0 +1,7 @@
+@startuml
+scale 2
+left to right direction
+digraph d{
+    a [shape=box,sides=4,label="User story creation for new schema. Determination of scope of change. (Major, Minor, Patch)"]    
+}
+@enduml

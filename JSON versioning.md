@@ -32,34 +32,29 @@ A minor change would be for new features or functionality that is back words com
 #### MAJOR
 A major change would include new required data. Any changes where the client needs to make changes would be considered a major change.
 #### PRE-RELEASE
-Changes that are being tested before being utilized this would live in Meijer's INT environment. Versions will be have a suffix of .alpha.x
+Changes that are being tested. Versions will be have an additional version as a suffix ex. v1.0.1.1 = beta release 1
 
 ## Nuget package implementation
 A Nuget package for each type of schema will needed to support model/schema changes
 
-Will include:
-
 - **Models**
 
-    Models will include all data for the specified schema version the nuget package is for. The schema will be used for model verification I.E. no required field annotations
+    Models will include all data for the specified schema version the Nuget package is for. The schema will be used for model verification I.E. no required field annotations
 - **Helper libraries**
 
     Parsing functions
 - **Schema validation**
 
-    Parsed json will be automatically checked against the schema
+    Json input can be validated against the schema
 - **Access to schema file through blob storage**
 
-    The schema blob will be downloaded on startup the nuget package will expose the schema in a public field. A method will be included for http requests.
+    The schema blob will be downloaded on startup the Nuget package will expose the schema in a public field. A method will be included for http requests.
 
     when serializing to model use the schema to validate no more [required]
 
-
-    the version of the schema would be set during release. for example 2 devs working on the schema they should not decide the version
-
-    how do we deal with schema changes in the 3 environments. schema needs to be fully deployed before dev starts
 - **Management of deployment environment**
-    The nuget package will be environment aware. when running in pre production environments the pre-release versions of the schema will be used if the specified schema version has not been fully completed aka in prod.
+
+    The Nuget package will be environment aware. when running in pre production environments the pre-release versions of the schema will be used if the specified schema version has not been fully completed aka in prod.
 
 ## Schema Deployment
 
@@ -87,13 +82,4 @@ A Nuget package update can be required for two scenarios.
     **Before the Nuget package can be updated to support a new schema, the new schema must be published to Azure.**
 
     Changes to the models will be completed
-    The schema version supported needs to be updated. (Do not include pre-release versioning. the nuget package will determine which will be used based on the environment it is running in)
-## Use Cases
-
-### Two devs working on the same schema
-
-### Nuget package update
-
-
-
-## Coordinating a version change
+    The schema version supported needs to be updated. (Do not include pre-release versioning. The Nuget package will determine which will be used based on the environment it is running in)
